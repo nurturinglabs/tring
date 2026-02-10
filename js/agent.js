@@ -308,8 +308,8 @@ async function processAudio(audioBase64) {
       showTicketNotification(chatData.ticket);
     }
 
-    // Done?
-    if (chatData.conversation_complete) {
+    // Done? End if conversation_complete OR if a ticket was just created
+    if (chatData.conversation_complete || chatData.ticket) {
       stopConversation();
       micLabel.textContent = 'Click to start';
       return;

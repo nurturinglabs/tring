@@ -82,6 +82,7 @@ const demoData = [
 
 let currentPlayingDemo = null;
 let demoAbortController = null;
+let currentDemoAudio = null;
 
 function initDemos() {
   demosGrid.innerHTML = '';
@@ -136,27 +137,33 @@ async function fetchTTS(text, langCode) {
 function playBase64Audio(base64Audio) {
   return new Promise((resolve) => {
     if (!base64Audio) { resolve(); return; }
-    try {
-      const audio = new Audio('data:audio/wav;base64,' + base64Audio);
-      audio.onended = resolve;
-      audio.onerror = resolve;
-      audio.play().catch(resolve);
-    } catch (e) {
-      resolve();
+    const mimeTypes = ['audio/wav', 'audio/mpeg', 'audio/mp3', 'audio/ogg'];
+    let attempt = 0;
+
+    function tryPlay() {
+      if (attempt >= mimeTypes.length) { currentDemoAudio = null; resolve(); return; }
+      const audio = new Audio('data:' + mimeTypes[attempt] + ';base64,' + base64Audio);
+      currentDemoAudio = audio;
+      audio.onended = () => { currentDemoAudio = null; resolve(); };
+      audio.onerror = () => { attempt++; tryPlay(); };
+      audio.play().then(() => {
+        // Playing — onended will resolve
+      }).catch(() => { attempt++; tryPlay(); });
     }
+    tryPlay();
   });
 }
 
 async function playDemoConversation(index) {
-  // Stop any currently playing demo
-  if (currentPlayingDemo !== null) {
-    stopDemoPlayback(currentPlayingDemo);
+  // If clicking the same demo that's playing, just stop it
+  if (currentPlayingDemo === index) {
+    stopDemoPlayback(index);
+    return;
   }
 
-  // If clicking the same demo, just stop
-  if (currentPlayingDemo === index) {
-    currentPlayingDemo = null;
-    return;
+  // Stop any other currently playing demo
+  if (currentPlayingDemo !== null) {
+    stopDemoPlayback(currentPlayingDemo);
   }
 
   const demo = demoData[index];
@@ -222,6 +229,13 @@ function stopDemoPlayback(index) {
   if (demoAbortController) {
     demoAbortController.aborted = true;
     demoAbortController = null;
+  }
+
+  // Stop any currently playing audio immediately
+  if (currentDemoAudio) {
+    currentDemoAudio.pause();
+    currentDemoAudio.currentTime = 0;
+    currentDemoAudio = null;
   }
 
   const playBtn = document.querySelector(`.demo-play-btn[data-index="${index}"]`);
