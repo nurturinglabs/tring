@@ -139,21 +139,23 @@ async function fetchTTS(text, langCode) {
   } catch (e) { return null; }
 }
 
-// ── Audio playback ──
+// ── Audio playback — try multiple MIME types with proper fallback chain ──
 function playBase64Audio(base64Audio) {
   return new Promise((resolve) => {
     if (!base64Audio) { resolve(); return; }
-    const audio = new Audio();
-    audio.onended = resolve;
-    audio.onerror = () => {
-      // Fallback MIME type
-      const a2 = new Audio('data:audio/mpeg;base64,' + base64Audio);
-      a2.onended = resolve;
-      a2.onerror = resolve;
-      a2.play().catch(resolve);
-    };
-    audio.src = 'data:audio/wav;base64,' + base64Audio;
-    audio.play().catch(resolve);
+    const mimeTypes = ['audio/wav', 'audio/mpeg', 'audio/mp3', 'audio/ogg'];
+    let attempt = 0;
+
+    function tryPlay() {
+      if (attempt >= mimeTypes.length) { resolve(); return; }
+      const audio = new Audio('data:' + mimeTypes[attempt] + ';base64,' + base64Audio);
+      audio.onended = resolve;
+      audio.onerror = () => { attempt++; tryPlay(); };
+      audio.play().then(() => {
+        // Playing successfully — onended will resolve
+      }).catch(() => { attempt++; tryPlay(); });
+    }
+    tryPlay();
   });
 }
 
