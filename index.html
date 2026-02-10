@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tring — AI Voice Agent for Apartment Management</title>
+  <meta name="description" content="Multilingual AI voice agent for apartment management. Understands complaints in 10 Indian languages. Creates tickets instantly.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">📞</span>
+        <span class="logo-text">Tring</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#demos">Demos</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/admin.html" style="color:#f97316;">Admin 🔒</a>
+      </div>
+      <a href="#hero" class="nav-cta">Try Live Demo</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- SECTION 1: HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-container">
+      <div class="hero-text">
+        <p class="hero-eyebrow">India's first</p>
+        <h1>AI Voice Agent for<br><span class="gradient-text">Apartment Management</span></h1>
+        <p class="hero-sub">
+          Understands complaints in 10 Indian languages. Creates tickets instantly. No app needed.
+        </p>
+        <p class="hero-powered">Powered by <span class="gradient-text">Sarvam AI</span> — India's own AI platform.</p>
+        <div class="hero-phone-strip">
+          <div class="phone-strip-item">
+            <span class="phone-strip-icon">📱</span>
+            <span>Residents just <strong>call a phone number</strong> — no app needed</span>
+          </div>
+          <div class="phone-strip-item">
+            <span class="phone-strip-icon">🗣️</span>
+            <span>Speak in <strong>any Indian language</strong> — Tring understands</span>
+          </div>
+          <div class="phone-strip-item">
+            <span class="phone-strip-icon">🎫</span>
+            <span>Tickets created <strong>automatically</strong> — staff notified instantly</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMO WIDGET -->
+      <div class="demo-widget" id="demo-widget">
+        <div class="demo-header">
+          <div class="demo-status">
+            <span class="status-dot"></span>
+            <span>Tring</span>
+          </div>
+          <span class="demo-label">LIVE DEMO</span>
+        </div>
+
+        <div class="demo-waveform idle" id="waveform">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="bar"></div><div class="bar"></div>
+        </div>
+
+        <div class="demo-transcript" id="transcript">
+          <div class="bubble agent">
+            <span class="bubble-icon">🤖</span>
+            <span class="bubble-text">नमस्कार! ट्रिंग सर्विस एजेंट में आपका स्वागत है। अपनी भाषा में बोलिए।</span>
+          </div>
+        </div>
+
+        <div class="demo-controls">
+          <button class="mic-button" id="mic-btn">
+            <span class="mic-icon">🎙️</span>
+          </button>
+          <span class="mic-label" id="mic-label">Click to start</span>
+        </div>
+
+        <div class="demo-footer">
+          <span class="detected-lang" id="detected-lang"></span>
+          <span class="powered-by">Powered by Sarvam AI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: TRUST BAR -->
+  <section class="trust-bar" id="trust-bar">
+    <div class="trust-container">
+      <div class="trust-item">
+        <span class="trust-number gradient-text">10</span>
+        <span class="trust-label">Indian Languages</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number gradient-text">Auto</span>
+        <span class="trust-label">Language Detection</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number gradient-text">24/7</span>
+        <span class="trust-label">Always Available</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number gradient-text">4</span>
+        <span class="trust-label">Sarvam AI Models</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-number gradient-text">&lt;5s</span>
+        <span class="trust-label">Response Time</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: HOW IT WORKS -->
+  <section class="section how-it-works" id="how-it-works">
+    <div class="section-container">
+      <h2 class="section-title">How it Works</h2>
+      <p class="section-sub">Three simple steps. Any language. Zero training needed.</p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">🗣️</div>
+          <h3>Resident Speaks</h3>
+          <p class="step-example indic-text">"ಬಾತ್ರೂಮ್ ಪೈಪ್ ಲೀಕ್ ಆಗ್ತಿದೆ"</p>
+          <p class="step-desc">Resident calls and describes their issue in any Indian language. No menus. No prompts.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">🧠</div>
+          <h3>AI Understands</h3>
+          <p class="step-example mono">Kannada → plumbing, B-204, urgent</p>
+          <p class="step-desc">Saarika detects the language. Sarvam-M extracts intent, category, flat number, and priority.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">✅</div>
+          <h3>Ticket Created</h3>
+          <p class="step-example mono">#1042 · Plumbing · Ramesh · 30min</p>
+          <p class="step-desc">Ticket auto-created, staff assigned, ETA set. Agent confirms in the resident's language.</p>
+        </div>
+      </div>
+
+      <!-- Pipeline diagram -->
+      <div class="pipeline">
+        <div class="pipeline-title mono">Under the hood</div>
+        <div class="pipeline-flow">
+          <div class="pipeline-node">
+            <span class="pipeline-label">Audio Input</span>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node highlight">
+            <span class="pipeline-model">Saarika STT</span>
+            <span class="pipeline-detail">auto-detect language</span>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node highlight">
+            <span class="pipeline-model">Sarvam-M</span>
+            <span class="pipeline-detail">understand intent</span>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node highlight">
+            <span class="pipeline-model">Bulbul V3</span>
+            <span class="pipeline-detail">voice response</span>
+          </div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-node">
+            <span class="pipeline-label">Ticket + Audio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: FEATURES -->
+  <section class="section features" id="features">
+    <div class="section-container">
+      <h2 class="section-title">Features</h2>
+      <p class="section-sub">Everything your apartment management needs. Nothing it doesn't.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Auto Language Detection</h3>
+          <p>Speaks Kannada? Agent responds in Kannada. No menus. No language selection. Saarika detects automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>Smart Triage</h3>
+          <p>AI categorizes complaints — plumbing, electrical, security — and sets priority: urgent vs normal. Automatically.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Instant Tickets</h3>
+          <p>Auto-creates tickets with category, priority, flat number, and assigned maintenance staff. No manual entry.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👴</div>
+          <h3>No App Needed</h3>
+          <p>No downloads. No typing. No English required. Works for elderly residents who just want to call and speak.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Live Dashboard</h3>
+          <p>Managers see all tickets in real time. Filter by category, priority, status. Complete visibility into operations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔔</div>
+          <h3>Staff Alerts</h3>
+          <p>Plumber gets instant alert: "Leak at B-204. Go now." Auto-dispatched based on category and availability.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: LISTEN TO DEMOS -->
+  <section class="section demos" id="demos">
+    <div class="section-container">
+      <h2 class="section-title">Listen to Tring in Action</h2>
+      <p class="section-sub">Real conversations. Real complaints. 5 Indian languages.</p>
+
+      <div class="demos-grid" id="demos-grid">
+        <!-- Demo cards will be injected by demos.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: LIVE DASHBOARD -->
+  <section class="section dashboard-section" id="dashboard">
+    <div class="section-container">
+      <h2 class="section-title">Live Dashboard</h2>
+      <p class="section-sub">Sunrise Apartments — Real-time ticket management</p>
+
+      <div class="dashboard-widget">
+        <div class="dashboard-header">
+          <div class="dashboard-title">
+            <span class="dashboard-icon">📊</span>
+            <span>Live Dashboard — Sunrise Apartments</span>
+          </div>
+          <div class="dashboard-stats" id="dashboard-stats">
+            <span class="stat open">0 Open</span>
+            <span class="stat urgent">0 Urgent</span>
+            <span class="stat resolved">0 Resolved</span>
+          </div>
+        </div>
+        <div class="dashboard-filters" id="dashboard-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="urgent">Urgent</button>
+          <button class="filter-btn" data-filter="plumbing">Plumbing</button>
+          <button class="filter-btn" data-filter="electrical">Electrical</button>
+          <button class="filter-btn" data-filter="security">Security</button>
+          <button class="filter-btn" data-filter="housekeeping">Housekeeping</button>
+        </div>
+        <div class="dashboard-tickets" id="dashboard-tickets">
+          <!-- Tickets rendered by dashboard.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: TECH STACK -->
+  <section class="section tech-stack" id="tech-stack">
+    <div class="section-container">
+      <h2 class="section-title">Powered Entirely by Sarvam AI</h2>
+      <p class="section-sub">4 Sarvam products. Every interaction. The ultimate showcase.</p>
+
+      <div class="tech-pipeline">
+        <div class="tech-card">
+          <div class="tech-name mono">Saarika v2.5</div>
+          <div class="tech-role">Speech to Text</div>
+          <div class="tech-detail">+ Auto Language Detection</div>
+        </div>
+        <div class="tech-arrow">→</div>
+        <div class="tech-card">
+          <div class="tech-name mono">Sarvam-M</div>
+          <div class="tech-role">Understand Intent</div>
+          <div class="tech-detail">+ Extract Details</div>
+        </div>
+        <div class="tech-arrow">→</div>
+        <div class="tech-card">
+          <div class="tech-name mono">Mayura</div>
+          <div class="tech-role">Translate</div>
+          <div class="tech-detail">Cross-language Support</div>
+        </div>
+        <div class="tech-arrow">→</div>
+        <div class="tech-card">
+          <div class="tech-name mono">Bulbul V3</div>
+          <div class="tech-role">Voice Response</div>
+          <div class="tech-detail">in Any Language</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 8: PRICING -->
+  <section class="section pricing" id="pricing">
+    <div class="section-container">
+      <h2 class="section-title">Pricing</h2>
+      <p class="section-sub">Start free. Scale as your community grows.</p>
+
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-tier">Starter</div>
+          <div class="pricing-price">₹4,999<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>Up to 100 units</li>
+            <li>5 languages</li>
+            <li>Basic dashboard</li>
+            <li>Email support</li>
+          </ul>
+          <a href="#" class="btn btn-secondary pricing-btn">Start Free Trial</a>
+        </div>
+        <div class="pricing-card popular">
+          <div class="pricing-badge">POPULAR</div>
+          <div class="pricing-tier">Pro</div>
+          <div class="pricing-price">₹14,999<span>/mo</span></div>
+          <ul class="pricing-features">
+            <li>Up to 500 units</li>
+            <li>10 languages</li>
+            <li>Full dashboard</li>
+            <li>WhatsApp alerts</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="#" class="btn btn-primary pricing-btn">Start Free Trial</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier">Enterprise</div>
+          <div class="pricing-price">Custom</div>
+          <ul class="pricing-features">
+            <li>Unlimited units</li>
+            <li>10 languages</li>
+            <li>Custom dashboard</li>
+            <li>API access</li>
+            <li>SLA guarantee</li>
+          </ul>
+          <a href="#" class="btn btn-secondary pricing-btn">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h3><span class="indic-text">ट्रिंग</span> Tring</h3>
+        <p>AI Voice Agent for Apartment Management</p>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#demos">Demo</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+      <div class="footer-contest">
+        🎙️ Built with Sarvam AI — Saarika · Sarvam-M · Translate · Bulbul V3
+        <br>
+        #TheMicIsYours · Bulbul Challenge 2025
+      </div>
+      <div class="footer-languages indic-text">
+        हिन्दी · ಕನ್ನಡ · தமிழ் · తెలుగు · മലയാളം · বাংলা · मराठी · ગુજરાતી · ଓଡ଼ିଆ · ਪੰਜਾਬੀ
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/animations.js"></script>
+  <script src="js/agent.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/demos.js"></script>
+</body>
+</html>

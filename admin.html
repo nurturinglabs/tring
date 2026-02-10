@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tring Admin — Ticket Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&family=Noto+Sans+Tamil:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-layout {
+      min-height: 100vh;
+      padding-top: 80px;
+    }
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .admin-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .admin-title span {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+    .admin-actions {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .admin-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    .admin-btn:hover { border-color: var(--border-active); }
+    .admin-btn.danger { border-color: rgba(239,68,68,0.3); color: #ef4444; }
+    .admin-btn.danger:hover { background: rgba(239,68,68,0.1); }
+
+    /* Stats cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .stat-card .stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .stat-card .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+    .stat-value.open { color: #60a5fa; }
+    .stat-value.urgent { color: #ef4444; }
+    .stat-value.resolved { color: #22c55e; }
+    .stat-value.total { background: linear-gradient(135deg, #f97316, #eab308); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+    /* Filters */
+    .admin-filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .admin-filters label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-right: 0.5rem;
+    }
+    .admin-search {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .admin-search:focus { border-color: var(--border-active); }
+    .admin-search::placeholder { color: var(--text-muted); }
+
+    /* Table */
+    .tickets-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .tickets-table th {
+      text-align: left;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tickets-table td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+    .tickets-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+    .tickets-table tr.new-row td {
+      animation: flashIn 0.5s ease-out;
+    }
+
+    .priority-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .priority-badge.urgent { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .priority-badge.normal { background: rgba(234,179,8,0.15); color: #eab308; }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .status-badge.open { background: rgba(59,130,246,0.1); color: #60a5fa; }
+    .status-badge.resolved { background: rgba(34,197,94,0.1); color: #22c55e; }
+    .status-badge:hover { opacity: 0.8; }
+
+    .status-dot-sm {
+      width: 6px; height: 6px; border-radius: 50%;
+    }
+    .status-dot-sm.open { background: #60a5fa; }
+    .status-dot-sm.resolved { background: #22c55e; }
+
+    .category-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .lang-tag {
+      font-size: 0.75rem;
+      color: var(--accent-orange);
+    }
+
+    .ticket-id-cell {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .action-btn {
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .action-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+    .action-btn.resolve { color: #22c55e; border-color: rgba(34,197,94,0.3); }
+    .action-btn.resolve:hover { background: rgba(34,197,94,0.1); }
+    .action-btn.delete { color: #ef4444; border-color: rgba(239,68,68,0.3); }
+    .action-btn.delete:hover { background: rgba(239,68,68,0.1); }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      .tickets-table { font-size: 0.75rem; }
+      .tickets-table th, .tickets-table td { padding: 0.5rem; }
+      .admin-header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-icon">📞</span>
+        <span class="logo-text">Tring</span>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="/">Home</a>
+        <a href="/#features">Features</a>
+        <a href="/#demos">Demos</a>
+        <a href="/#dashboard">Dashboard</a>
+        <a href="/admin.html" style="color:var(--accent-orange);">Admin</a>
+      </div>
+      <a href="/" class="nav-cta">Back to Home</a>
+    </div>
+  </nav>
+
+  <div class="admin-layout">
+    <div class="admin-container">
+
+      <div class="admin-header">
+        <div>
+          <div class="admin-title">
+            Ticket Management <span>· Sunrise Apartments</span>
+          </div>
+        </div>
+        <div class="admin-actions">
+          <button class="admin-btn" id="refresh-btn">🔄 Refresh</button>
+          <button class="admin-btn danger" id="clear-btn">🗑️ Clear All</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card">
+          <div class="stat-value total" id="stat-total">0</div>
+          <div class="stat-label">Total Tickets</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value open" id="stat-open">0</div>
+          <div class="stat-label">Open</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value urgent" id="stat-urgent">0</div>
+          <div class="stat-label">Urgent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value resolved" id="stat-resolved">0</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color:var(--accent-orange);" id="stat-languages">0</div>
+          <div class="stat-label">Languages</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="admin-filters">
+        <label>Filter:</label>
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="open">Open</button>
+        <button class="filter-btn" data-filter="urgent">Urgent</button>
+        <button class="filter-btn" data-filter="resolved">Resolved</button>
+        <button class="filter-btn" data-filter="plumbing">Plumbing</button>
+        <button class="filter-btn" data-filter="electrical">Electrical</button>
+        <button class="filter-btn" data-filter="security">Security</button>
+        <button class="filter-btn" data-filter="housekeeping">Housekeeping</button>
+        <input class="admin-search" id="search-input" placeholder="Search tickets, flat numbers, descriptions..." type="text">
+      </div>
+
+      <!-- Tickets Table -->
+      <div style="overflow-x:auto;">
+        <table class="tickets-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Priority</th>
+              <th>Category</th>
+              <th>Flat</th>
+              <th>Description</th>
+              <th>Assigned</th>
+              <th>ETA</th>
+              <th>Lang</th>
+              <th>Status</th>
+              <th>Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tickets-body"></tbody>
+        </table>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          No tickets found.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const langDisplay = {
+      'hi-IN': 'हिन्दी', 'kn-IN': 'ಕನ್ನಡ', 'ta-IN': 'தமிழ்',
+      'te-IN': 'తెలుగు', 'ml-IN': 'മലയാളം', 'bn-IN': 'বাংলা',
+      'mr-IN': 'मराठी', 'gu-IN': 'ગુજરાતી', 'od-IN': 'ଓଡ଼ିଆ', 'pa-IN': 'ਪੰਜਾਬੀ',
+      'en-IN': 'English'
+    };
+
+    const sampleTickets = [
+      { id: 1040, category: 'housekeeping', flat_number: 'C-301', priority: 'normal', summary_en: 'Common area cleaning needed', summary_local: 'பொது பகுதி சுத்தம்', assigned_to: 'Lakshmi', eta: '4 hours', timestamp: new Date(Date.now() - 3600000).toISOString(), status: 'resolved', language: 'ta-IN' },
+      { id: 1041, category: 'electrical', flat_number: 'A-105', priority: 'normal', summary_en: 'Corridor light not working', summary_local: 'गलियारे की लाइट', assigned_to: 'Suresh', eta: '2 hours', timestamp: new Date(Date.now() - 900000).toISOString(), status: 'open', language: 'hi-IN' },
+      { id: 1042, category: 'plumbing', flat_number: 'B-204', priority: 'urgent', summary_en: 'Bathroom pipe leaking', summary_local: 'ಬಾತ್ರೂಮ್ ಪೈಪ್ ಲೀಕ್', assigned_to: 'Ramesh', eta: '30 minutes', timestamp: new Date(Date.now() - 120000).toISOString(), status: 'open', language: 'kn-IN' }
+    ];
+
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let lastCount = 0;
+
+    function getAllTickets() {
+      const stored = JSON.parse(localStorage.getItem('tring_tickets') || '[]');
+      return [...sampleTickets, ...stored];
+    }
+
+    function updateStats(tickets) {
+      document.getElementById('stat-total').textContent = tickets.length;
+      document.getElementById('stat-open').textContent = tickets.filter(t => t.status === 'open').length;
+      document.getElementById('stat-urgent').textContent = tickets.filter(t => t.priority === 'urgent').length;
+      document.getElementById('stat-resolved').textContent = tickets.filter(t => t.status === 'resolved').length;
+      const langs = new Set(tickets.map(t => t.language).filter(Boolean));
+      document.getElementById('stat-languages').textContent = langs.size;
+    }
+
+    function filterTickets(tickets) {
+      let filtered = tickets;
+      if (currentFilter === 'open') filtered = tickets.filter(t => t.status === 'open');
+      else if (currentFilter === 'urgent') filtered = tickets.filter(t => t.priority === 'urgent');
+      else if (currentFilter === 'resolved') filtered = tickets.filter(t => t.status === 'resolved');
+      else if (currentFilter !== 'all') filtered = tickets.filter(t => t.category === currentFilter);
+
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        filtered = filtered.filter(t =>
+          (t.flat_number || '').toLowerCase().includes(q) ||
+          (t.summary_en || '').toLowerCase().includes(q) ||
+          (t.summary_local || '').toLowerCase().includes(q) ||
+          (t.assigned_to || '').toLowerCase().includes(q) ||
+          (t.category || '').toLowerCase().includes(q) ||
+          String(t.id).includes(q)
+        );
+      }
+
+      return filtered.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
+
+    function render() {
+      const allTickets = getAllTickets();
+      updateStats(allTickets);
+      const filtered = filterTickets(allTickets);
+      const tbody = document.getElementById('tickets-body');
+      const empty = document.getElementById('empty-state');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      tbody.innerHTML = filtered.map((t, i) => {
+        const isNew = allTickets.length > lastCount && i === 0;
+        return `
+          <tr class="${isNew ? 'new-row' : ''}" data-id="${t.id}">
+            <td class="ticket-id-cell">#${t.id}</td>
+            <td><span class="priority-badge ${t.priority}">${t.priority === 'urgent' ? '🔴 Urgent' : '🟡 Normal'}</span></td>
+            <td><span class="category-tag">${capitalize(t.category)}</span></td>
+            <td><strong>${t.flat_number || '-'}</strong></td>
+            <td>${t.summary_local || t.summary_en || '-'}</td>
+            <td>${t.assigned_to || '-'}</td>
+            <td>${t.eta || '-'}</td>
+            <td><span class="lang-tag">${langDisplay[t.language] || t.language || '-'}</span></td>
+            <td>
+              <span class="status-badge ${t.status}" onclick="toggleStatus(${t.id})">
+                <span class="status-dot-sm ${t.status}"></span>
+                ${capitalize(t.status)}
+              </span>
+            </td>
+            <td style="font-size:0.75rem;color:var(--text-muted);">${timeAgo(t.timestamp)}</td>
+            <td>
+              <div style="display:flex;gap:0.3rem;">
+                ${t.status === 'open' ? `<button class="action-btn resolve" onclick="resolveTicket(${t.id})">✓ Resolve</button>` : `<button class="action-btn" onclick="reopenTicket(${t.id})">↺ Reopen</button>`}
+                <button class="action-btn delete" onclick="deleteTicket(${t.id})">✕</button>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+
+      lastCount = allTickets.length;
+    }
+
+    function toggleStatus(id) {
+      const stored = JSON.parse(localStorage.getItem('tring_tickets') || '[]');
+      const ticket = stored.find(t => t.id === id);
+      if (ticket) {
+        ticket.status = ticket.status === 'open' ? 'resolved' : 'open';
+        localStorage.setItem('tring_tickets', JSON.stringify(stored));
+      }
+      render();
+    }
+
+    function resolveTicket(id) {
+      const stored = JSON.parse(localStorage.getItem('tring_tickets') || '[]');
+      const ticket = stored.find(t => t.id === id);
+      if (ticket) { ticket.status = 'resolved'; localStorage.setItem('tring_tickets', JSON.stringify(stored)); }
+      render();
+    }
+
+    function reopenTicket(id) {
+      const stored = JSON.parse(localStorage.getItem('tring_tickets') || '[]');
+      const ticket = stored.find(t => t.id === id);
+      if (ticket) { ticket.status = 'open'; localStorage.setItem('tring_tickets', JSON.stringify(stored)); }
+      render();
+    }
+
+    function deleteTicket(id) {
+      if (!confirm('Delete ticket #' + id + '?')) return;
+      const stored = JSON.parse(localStorage.getItem('tring_tickets') || '[]');
+      const updated = stored.filter(t => t.id !== id);
+      localStorage.setItem('tring_tickets', JSON.stringify(updated));
+      render();
+    }
+
+    function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+    function timeAgo(ts) {
+      const diff = Date.now() - new Date(ts).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return mins + 'm ago';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h ago';
+      return Math.floor(hrs / 24) + 'd ago';
+    }
+
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        render();
+      });
+    });
+
+    // Search
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      render();
+    });
+
+    // Actions
+    document.getElementById('refresh-btn').addEventListener('click', render);
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      if (!confirm('Clear all user-created tickets? Sample tickets will remain.')) return;
+      localStorage.removeItem('tring_tickets');
+      render();
+    });
+
+    // Poll for new tickets
+    setInterval(render, 3000);
+
+    // Init
+    render();
+  </script>
+</body>
+</html>
