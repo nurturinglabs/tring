@@ -33,8 +33,8 @@ const langNames = {
   'en-IN': 'English'
 };
 
-// ── PRE-CACHE welcome audio on page load ──
-(async function preloadWelcome() {
+// ── PRE-CACHE welcome audio on page load (with retry) ──
+async function loadWelcomeAudio() {
   try {
     const res = await fetch('/api/tts', {
       method: 'POST',
@@ -45,11 +45,15 @@ const langNames = {
     if (data.audio) {
       cachedWelcomeAudio = data.audio;
       console.log('Welcome audio pre-cached');
+      return true;
     }
   } catch (e) {
-    console.log('Could not pre-cache welcome audio');
+    console.log('Welcome audio fetch failed, will retry');
   }
-})();
+  return false;
+}
+// Try immediately, retry once after 3s if it fails (Vercel cold start)
+loadWelcomeAudio().then(ok => { if (!ok) setTimeout(loadWelcomeAudio, 3000); });
 
 // Single click to start / stop
 micBtn.addEventListener('click', () => {
@@ -75,12 +79,29 @@ async function startConversation() {
   transcript.innerHTML = '';
   addBubble('agent', WELCOME_TEXT);
 
-  // Play cached welcome audio (instant!) or fetch on the fly
+  // Play cached welcome audio (instant!) or fetch on the fly with timeout
   if (cachedWelcomeAudio) {
     await playBase64Audio(cachedWelcomeAudio);
   } else {
-    const audio = await fetchTTS(WELCOME_TEXT, 'hi-IN');
-    if (audio) await playBase64Audio(audio);
+    // Fetch with 5s timeout so we don't hang on cold starts
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: WELCOME_TEXT, language_code: 'hi-IN' }),
+        signal: controller.signal
+      });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (data.audio) {
+        cachedWelcomeAudio = data.audio;
+        await playBase64Audio(data.audio);
+      }
+    } catch (e) {
+      console.log('Welcome TTS timed out, continuing without audio');
+    }
   }
 
   // Start listening
